@@ -26,7 +26,17 @@ class TaskViewModel @Inject constructor():ViewModel() {
     }
 
     fun onCheckBoxSelected(taskModel: TaskModel) {
-        TODO("Not yet implemented")
+        val index = _task.indexOf(taskModel)
+        _task[index] = _task[index].let {
+            it.copy(selected =!it.selected)
+        }
+    }
+
+    fun onItemRemove(taskModel: TaskModel) {
+        val task = _task.find { it.id == taskModel.id }
+
+        _task.remove(task)
+
     }
 
 

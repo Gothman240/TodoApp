@@ -2,6 +2,7 @@ package com.todoapp.addtasks.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,7 +56,7 @@ fun TaskScreen(tasksViewModel: TaskViewModel) {
 fun TaskList(tasksViewModel: TaskViewModel) {
     val myTasks: List<TaskModel> = tasksViewModel.task
     LazyColumn {
-        items(myTasks, key = {it.id}){
+        items(myTasks, key = { it.id }) {
             ItemTask(taskModel = it, tasksViewModel = tasksViewModel)
         }
     }
@@ -67,15 +69,26 @@ fun ItemTask(taskModel: TaskModel, tasksViewModel: TaskViewModel) {
     Card(
         Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(onLongPress = {
+                    tasksViewModel.onItemRemove(
+                        taskModel
+                    )
+                })
+            },
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
 
     ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = taskModel.task, modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 4.dp))
-            Checkbox(checked = taskModel.selected, onCheckedChange = {tasksViewModel.onCheckBoxSelected(taskModel)})
+            Text(
+                text = taskModel.task, modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 4.dp)
+            )
+            Checkbox(
+                checked = taskModel.selected,
+                onCheckedChange = { tasksViewModel.onCheckBoxSelected(taskModel) })
         }
     }
 }
